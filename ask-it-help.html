@@ -108,6 +108,29 @@ const TICKET_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=W9l
 const IT_PHONE = "208-972-8004";
 const AFTER_HOURS = "208-972-8004";
 
+  /* ============ Office hours ============
+   days: 0 = Sunday, 1 = Monday ... 6 = Saturday.
+   open/close: 24-hour time in Boise (Mountain) time. */
+const OFFICE_HOURS = { days: [1, 2, 3, 4, 5], open: "08:00", close: "17:00", timeZone: "America/Boise" };
+/* Days IT is closed, as "YYYY-MM-DD". Edit this list each year. */
+const HOLIDAYS = ["2026-11-26", "2026-12-25", "2027-01-01"];
+
+function itNow() {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: OFFICE_HOURS.timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short" }).formatToParts(new Date());
+  const get = t => parts.find(p => p.type === t).value;
+  const days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  return { date: get("year") + "-" + get("month") + "-" + get("day"), day: days[get("weekday")], minutes: parseInt(get("hour"), 10) * 60 + parseInt(get("minute"), 10) };
+}
+function toMinutes(hhmm) { const p = hhmm.split(":").map(Number); return p[0] * 60 + p[1]; }
+function isOpen() {
+  const n = itNow();
+  return OFFICE_HOURS.days.includes(n.day) && !HOLIDAYS.includes(n.date) &&
+    n.minutes >= toMinutes(OFFICE_HOURS.open) && n.minutes < toMinutes(OFFICE_HOURS.close);
+}
+function closedNotice() {
+  return { text: "IT is closed right now. For urgent problems that stop your work, call " + AFTER_HOURS + ". I can still help with common questions, and any ticket you create will be picked up when IT reopens." };
+} 
+
 /* ============ Service status ============
    To report an outage in the chat, set active to true and fill in the details. */
 const SERVICE_STATUS = {
@@ -238,6 +261,7 @@ const ANSWERS = [
   });
 
   addMsg("bot", "Hi! I'm the IT Help chat. Ask me a question, or pick one of the options below.");
+     if (!isOpen()) addMsg("bot", closedNotice());
   form.addEventListener("submit", e => { e.preventDefault(); ask(input.value); input.value = ""; });
 })();
 </script>
