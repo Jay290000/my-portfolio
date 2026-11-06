@@ -62,11 +62,11 @@
     "noOutageMessage": "No outage has been posted to this chat. The Service status banner on the IT Helpdesk home page always shows the latest, so check it first. If something still isn't working for you, create a ticket."
   },
   "status": {
-    "active": true,
-    "service": "VON",
-    "message": "Remote users can not connect",
+    "active": false,
+    "service": "",
+    "message": "",
     "workaround": "",
-    "nextUpdate": "2:000"
+    "nextUpdate": ""
   },
   "answers": [
     {
