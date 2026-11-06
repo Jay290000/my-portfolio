@@ -423,10 +423,9 @@
       "ticket": true,
       "keywords": [
         "Star Wars",
-        "Yoda",
         "Darth Vader"
       ],
-      "text": "\"No, I am your father.\" — Darth Vader (Episode V)\n\n\"Fear is the path to the dark side...\" — Yoda (Episode I)",
+      "text": "\"No, I am your father.\" — Darth Vader (Episode V)\n",
       "steps": [],
       "links": []
     }
