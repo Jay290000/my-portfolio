@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask IT Help</title>
+<style>
+:root {
+  --navy: #1f3a5f;
+  --navy-deep: #14263f;
+  --teal: #0f8b8d;
+  --teal-text: #0b6e70;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --border: #dde1e7;
+  --text: #1b1f24;
+  --muted: #4a5563;
+  --on-navy: #ffffff;
+  --on-navy-muted: #dde1e7;
+  --chip-bg: #e6eef8;
+  --chip-text: #1f3a5f;
+  --placeholder: #dde1e7;
+  --ok-bg: #e7f4ee;
+  --ok-border: #b8dcc9;
+  --ok-text: #1d5a3c;
+  --alert-bg: #fdecea;
+  --alert-border: #f3b8b1;
+  --alert-text: #5c1410;
+  --alert-strong: #b3261e;
+  --focus: #0f8b8d;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --navy: #1a3352;
+    --navy-deep: #0f1d31;
+    --teal: #13a3a5;
+    --teal-text: #5fd0d2;
+    --bg: #12161c;
+    --surface: #1b2129;
+    --border: #2e3641;
+    --text: #e8ebef;
+    --muted: #a9b2bf;
+    --on-navy: #ffffff;
+    --on-navy-muted: #c7d0dc;
+    --chip-bg: #243246;
+    --chip-text: #cfe0f5;
+    --placeholder: #2a323d;
+    --ok-bg: #16281f;
+    --ok-border: #2b5640;
+    --ok-text: #a8e0c2;
+    --alert-bg: #3a1a18;
+    --alert-border: #6b2a24;
+    --alert-text: #f6c9c4;
+    --alert-strong: #e0574c;
+    --focus: #5fd0d2;
+    color-scheme: dark;
+  }
+}
+
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font-family: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; color: var(--text); background: var(--surface); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.chat { height: 100%; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.chat-head { background: var(--navy); color: #ffffff; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.chat-head svg { flex: none; }
+.chat-head h1 { margin: 0; font-size: 16px; }
+.chat-head p { margin: 2px 0 0; font-size: 12px; color: var(--on-navy-muted); }
+.chat-log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+.msg { max-width: 88%; padding: 10px 12px; border-radius: 10px; font-size: 14px; line-height: 1.45; }
+.msg p { margin: 0 0 6px; } .msg p:last-child { margin-bottom: 0; }
+.msg ol { margin: 6px 0; padding-left: 20px; } .msg li + li { margin-top: 4px; }
+.msg.bot { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+.msg.me { align-self: flex-end; background: var(--navy); color: #ffffff; border-bottom-right-radius: 2px; }
+.msg-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.msg-links a { display: inline-block; padding: 6px 10px; border-radius: 6px; background: var(--teal); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px 0; background: var(--surface); }
+.chips button { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 13px; cursor: pointer; }
+.chips button:hover { border-color: var(--teal); }
+.chat-form { display: flex; gap: 8px; padding: 12px 16px 14px; background: var(--surface); }
+.chat-form input { flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font: inherit; font-size: 14px; background: var(--surface); color: var(--text); }
+.chat-form button { border: 0; border-radius: 6px; padding: 0 14px; background: var(--navy); color: #ffffff; font: inherit; font-weight: 600; cursor: pointer; }
+.chat-note { margin: 0; padding: 0 16px 10px; font-size: 11px; color: var(--muted); background: var(--surface); }
+</style>
+</head>
+<body>
+<main class="chat" aria-labelledby="chat-title">
+  <div class="chat-head">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>
+    <div><h1 id="chat-title">Ask IT Help</h1><p>Quick answers to common questions</p></div>
+  </div>
+  <div class="chat-log" id="chat-log" aria-live="polite"></div>
+  <div class="chips" id="chat-chips"></div>
+  <form class="chat-form" id="chat-form">
+    <label class="visually-hidden" for="chat-input">Type your question</label>
+    <input id="chat-input" type="text" placeholder="Type your question…" autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+  <p class="chat-note">Never share your password or MFA codes here.</p>
+</main>
+<script>
+/* ============ Edit these for your organization ============ */
+/* Paste your Microsoft Form share link between the quotes. */
+const TICKET_URL = "PASTE-YOUR-MICROSOFT-FORM-LINK-HERE";
+const IT_PHONE = "[IT PHONE]";
+const AFTER_HOURS = "[ON-CALL NUMBER]";
+
+/* ============ Service status ============
+   To report an outage in the chat, set active to true and fill in the details. */
+const SERVICE_STATUS = {
+  active: false,
+  service: "VPN",
+  message: "Remote users can’t connect.",
+  workaround: "Use the web apps portal.",
+  nextUpdate: "10:30 AM"
+};
+
+/* ============ Chat answers ============
+   Each answer has keywords (words or phrases people might type),
+   a short reply, optional numbered steps, and optional link buttons.
+   Add, remove or edit entries to teach the chat new answers. */
+const ANSWERS = [
+  { keys: ["password", "reset", "forgot", "expired", "change password"],
+    text: "You can reset your password yourself, any time:",
+    steps: ["Go to the password reset page.", "Enter your work email and complete the verification.", "Choose a new password and sign in again everywhere (phone email, Teams, VPN)."],
+    links: [{ label: "Reset my password", url: "https://passwordreset.microsoftonline.com" }] },
+  { keys: ["locked", "lockout", "locked out", "can't sign in", "cant sign in", "cannot log in", "can't log in", "cant log in"],
+    text: "If your account is locked, wait 15 minutes and try again. If it's still locked, or you think someone else is using your account, call IT right away at " + IT_PHONE + "." },
+  { keys: ["mfa", "authenticator", "two factor", "2fa", "verification code", "new phone", "security info"],
+    text: "To set up MFA on a new phone:",
+    steps: ["Install Microsoft Authenticator on the new phone.", "On a computer, go to My Sign-Ins and open Security info.", "Choose Add sign-in method, pick Authenticator app, and scan the QR code with the phone.", "Remove the old phone from the list once the new one works."],
+    links: [{ label: "Open My Sign-Ins", url: "https://mysignins.microsoft.com/security-info" }] },
+  { keys: ["vpn", "remote", "work from home", "from home", "remote access"],
+    text: "For VPN problems, try these first:",
+    steps: ["Check that your internet works by opening any website.", "Fully quit the VPN client ([VPN CLIENT NAME]) and open it again.", "Restart your computer and reconnect.", "If it still fails, note any error message and create a ticket."] },
+  { keys: ["wifi", "wi-fi", "wireless", "internet", "network", "no connection"],
+    text: "For Wi-Fi trouble:",
+    steps: ["Make sure you're on the right network: [WI-FI NETWORK NAME].", "Turn Wi-Fi off and back on.", "Forget the network and reconnect.", "If other people nearby also have no connection, it may be an outage. Ask me 'is anything down?'"] },
+  { keys: ["print", "printer", "printing", "scan", "scanner", "toner", "paper jam"],
+    text: "To add a printer on Windows:",
+    steps: ["Open Settings, then Bluetooth & devices, then Printers & scanners.", "Select Add device, or Add manually and enter [PRINT SERVER] with the printer name.", "For jams, toner or hardware faults, create a ticket with the printer's name or location."] },
+  { keys: ["shared mailbox", "mailbox", "shared inbox"],
+    text: "Shared mailboxes you have access to usually appear in Outlook on their own within a few hours. To add one manually in Outlook on the web: right-click Folders, choose Add shared folder or mailbox, and type the mailbox name. No access yet? Create a ticket and include the mailbox name." },
+  { keys: ["outlook", "email", "e-mail", "not syncing", "inbox"],
+    text: "For Outlook problems:",
+    steps: ["Check whether Outlook on the web works. If it does, the issue is with the Outlook app.", "Close Outlook completely and reopen it.", "Restart your computer.", "If email still isn't arriving, create a ticket."] },
+  { keys: ["teams", "meeting", "camera", "microphone", "mic", "audio", "sound", "headset"],
+    text: "For Teams audio or video problems:",
+    steps: ["In Teams, open Settings, then Devices, and pick the right speaker, microphone and camera.", "Unplug and replug your headset or camera.", "Quit Teams completely and reopen it."] },
+  { keys: ["onedrive", "storage", "space", "sync", "files"],
+    text: "If OneDrive is full or not syncing:",
+    steps: ["Click the OneDrive cloud icon in the taskbar to see any errors.", "Turn on Files On-Demand so files only download when you open them.", "Delete or move large files you no longer need.", "Pause and resume syncing if it seems stuck."] },
+  { keys: ["slow", "freezing", "frozen", "crash", "crashing", "not responding"],
+    text: "If your computer is slow or freezing:",
+    steps: ["Save your work and restart (a full restart, not sleep).", "Install any pending updates.", "Close browser tabs and apps you don't need.", "If it keeps happening, create a ticket with what you were doing when it froze."] },
+  { keys: ["phish", "phishing", "suspicious", "scam", "spam", "clicked a link"],
+    text: "Don't click links or open attachments in the message. Use the Report button in Outlook to report it as phishing. If you already clicked a link or entered your password, reset your password now and call IT at " + IT_PHONE + ".",
+    links: [{ label: "Reset my password", url: "https://passwordreset.microsoftonline.com" }] },
+  { keys: ["software", "install", "app", "application", "license", "adobe"],
+    text: "To get software installed, create a ticket with the software name and why you need it. IT will check licensing and install it for you.",
+    ticket: true },
+  { keys: ["laptop", "computer", "monitor", "keyboard", "mouse", "device", "hardware", "dock", "new phone request"],
+    text: "For new equipment or broken hardware, create a ticket with what you need (or what's broken) and your location.",
+    ticket: true },
+  { keys: ["new hire", "first day", "onboarding", "new employee"],
+    text: "Welcome! On your first day: sign in with the details from your supervisor, set up MFA (ask me 'set up MFA'), and set a new password. If anything doesn't work, create a ticket." },
+  { keys: ["hours", "contact", "phone number", "call", "walk-up", "where is it"],
+    text: "You can reach IT by phone at " + IT_PHONE + ". For urgent outages after hours, call " + AFTER_HOURS + "." },
+  { keys: ["ticket", "request", "help desk", "helpdesk", "talk to someone", "human", "agent"],
+    text: "You can create a ticket and IT will get back to you.", ticket: true }
+];
+
+(function () {
+  const log = document.getElementById("chat-log");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  const chips = document.getElementById("chat-chips");
+  
+  function addMsg(who, parts) {
+    const m = document.createElement("div");
+    m.className = "msg " + who;
+    if (typeof parts === "string") parts = { text: parts };
+    if (parts.text) { const p = document.createElement("p"); p.textContent = parts.text; m.append(p); }
+    if (parts.steps) {
+      const ol = document.createElement("ol");
+      parts.steps.forEach(t => { const li = document.createElement("li"); li.textContent = t; ol.append(li); });
+      m.append(ol);
+    }
+    const links = (parts.links || []).slice();
+    if (parts.ticket) links.push({ label: "Create a ticket", url: TICKET_URL });
+    if (links.length) {
+      const row = document.createElement("div"); row.className = "msg-links";
+      links.forEach(l => { const a = document.createElement("a"); a.href = l.url; a.textContent = l.label; a.target = "_blank"; a.rel = "noopener"; row.append(a); });
+      m.append(row);
+    }
+    log.append(m);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function statusReply() {
+    const s = typeof SERVICE_STATUS !== "undefined" ? SERVICE_STATUS : null;
+    if (s && s.active) {
+      return { text: s.service + " is currently having problems: " + s.message +
+        (s.workaround ? " Workaround: " + s.workaround : "") +
+        (s.nextUpdate ? " Next update by " + s.nextUpdate + "." : "") };
+    }
+    return { text: "There are no known outages right now. If something isn't working for you, create a ticket.", ticket: true };
+  }
+
+  function answer(q) {
+    const t = " " + q.toLowerCase().replace(/[^a-z0-9\s'-]/g, " ").replace(/\s+/g, " ") + " ";
+    if (/\b(down|outage|not working for everyone|status|is anything)\b/.test(t)) return statusReply();
+    if (/^\s*(hi|hello|hey)\b/.test(t)) return { text: "Hi! What can I help you with? You can type a question or pick one of the options below." };
+    if (/\b(thanks|thank you|thx)\b/.test(t)) return { text: "You're welcome. Anything else?" };
+    let best = null, bestScore = 0;
+    ANSWERS.forEach(a => {
+      let score = 0;
+      a.keys.forEach(k => { if (t.includes(" " + k + " ") || t.includes(" " + k)) score += k.split(" ").length; });
+      if (score > bestScore) { best = a; bestScore = score; }
+    });
+    if (best) return best;
+    return { text: "I don't have an answer for that one yet. Create a ticket and IT will get back to you, or call " + IT_PHONE + " if it's urgent.", ticket: true };
+  }
+
+  function ask(q) {
+    q = q.trim(); if (!q) return;
+    addMsg("me", q);
+    setTimeout(() => addMsg("bot", answer(q)), 250);
+  }
+
+  ["Reset my password", "Set up MFA", "VPN help", "Is anything down?", "Create a ticket"].forEach(label => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", () => ask(label));
+    chips.append(b);
+  });
+
+  addMsg("bot", "Hi! I'm the IT Help chat. Ask me a question, or pick one of the options below.");
+  form.addEventListener("submit", e => { e.preventDefault(); ask(input.value); input.value = ""; });
+})();
+</script>
+</body>
+</html>
