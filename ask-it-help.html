@@ -256,8 +256,8 @@ const ANSWERS = [
 
   function answer(q) {
     const t = " " + q.toLowerCase().replace(/[^a-z0-9\s'-]/g, " ").replace(/\s+/g, " ") + " ";
-    if (/\b(down|outage|not working for everyone|status|is anything)\b/.test(t)) return statusReply();
-    if (/^\s*(hi|hello|hey)\b/.test(t)) return { text: "Hi! What can I help you with? You can type a question or pick one of the options below." };
+       if (/\b(down|outages?|status|is anything|anything (broken|wrong)|known (issues?|problems?)|service (issues?|problems?)|not working for (everyone|anyone|others))\b/.test(t)) return statusReply();
+        if (/^\s*(hi|hello|hey)\b/.test(t)) return { text: "Hi! What can I help you with? You can type a question or pick one of the options below." };
     if (/\b(thanks|thank you|thx)\b/.test(t)) return { text: "You're welcome. Anything else?" };
     let best = null, bestScore = 0;
     ANSWERS.forEach(a => {
