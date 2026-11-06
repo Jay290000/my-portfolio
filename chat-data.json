@@ -428,6 +428,19 @@
       "text": "\"No, I am your father.\" — Darth Vader (Episode V)\n",
       "steps": [],
       "links": []
+    },
+    {
+      "id": "answer-1793997050878",
+      "title": "Yoda Quotes",
+      "category": "",
+      "ticket": true,
+      "keywords": [
+        "Yoda",
+        "Star Wars"
+      ],
+      "text": "\n\"Fear is the path to the dark side...\" — Yoda (Episode I)",
+      "steps": [],
+      "links": []
     }
   ]
 }
