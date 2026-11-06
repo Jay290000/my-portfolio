@@ -415,6 +415,20 @@
       "text": "You can create a ticket and IT will get back to you.",
       "steps": [],
       "links": []
+    },
+    {
+      "id": "answer-1793996810401",
+      "title": "What are some famous  Star Wars quotes.",
+      "category": "",
+      "ticket": true,
+      "keywords": [
+        "Star Wars",
+        "Yoda",
+        "Darth Vader"
+      ],
+      "text": "\"No, I am your father.\" — Darth Vader (Episode V)\n\n\"Fear is the path to the dark side...\" — Yoda (Episode I)",
+      "steps": [],
+      "links": []
     }
   ]
 }
