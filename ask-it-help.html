@@ -107,7 +107,7 @@ body { font-family: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans
 const TICKET_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=W9leptMSNkGaJyUjmIfehAs8XNZoyp9DnVAl2NUCQhlUN0RSSlFLN05RTTZXSkY5NVc5MEEwT1BCMSQlQCN0PWcu";
 /* Pre-filled ticket link: in Forms, make a pre-filled link with Category set to "Other"
    and paste it here. The chat swaps "Other" for the right category. Leave as-is to skip. */
-const TICKET_PREFILL = "PASTE-PREFILLED-LINK-WITH-CATEGORY-OTHER-HERE";
+const TICKET_PREFILL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=W9leptMSNkGaJyUjmIfehAs8XNZoyp9DnVAl2NUCQhlUN0RSSlFLN05RTTZXSkY5NVc5MEEwT1BCMSQlQCN0PWcu&rb1d5f9178a924fa7a6950dc397ddff7a=%22Other%22";
 
 function ticketUrl(cat) {
   if (!cat || TICKET_PREFILL.indexOf("PASTE-") === 0) return TICKET_URL;
