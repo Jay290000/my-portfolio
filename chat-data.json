@@ -71,7 +71,7 @@
   "answers": [
     {
       "id": "password",
-      "title": "Reset a password",
+      "title": "What are the password Requierments",
       "category": "Accounts and Access",
       "ticket": false,
       "keywords": [
@@ -81,18 +81,9 @@
         "expired",
         "change password"
       ],
-      "text": "You can reset your password yourself, any time:",
-      "steps": [
-        "Go to the password reset page.",
-        "Enter your work email and complete the verification.",
-        "Choose a new password and sign in again everywhere (phone email, Teams, VPN)."
-      ],
-      "links": [
-        {
-          "label": "Reset my password",
-          "url": "https://passwordreset.microsoftonline.com"
-        }
-      ]
+      "text": "Password Requirements here",
+      "steps": [],
+      "links": []
     },
     {
       "id": "locked",
