@@ -432,6 +432,26 @@
       "text": "\n\"Fear is the path to the dark side...\" — Yoda (Episode I)",
       "steps": [],
       "links": []
+    },
+    {
+      "id": "answer-1793997439695",
+      "title": "Mobile Device Mgmt",
+      "category": "",
+      "ticket": true,
+      "keywords": [
+        "Mobile",
+        "Device",
+        "Personal",
+        "Email On phone"
+      ],
+      "text": "You can install portal on your personal phone.     The button will take you to the page which will guide you through how to fix the issue. ",
+      "steps": [],
+      "links": [
+        {
+          "label": "Open link",
+          "url": "https://boisecity.sharepoint.com/sites/it.digitalwork/SitePages/Mobile-Migration.aspx?CT=1793985831968&OR=MON-NT-Mail&CID=05f29364-fb0f-5db9-1fcf-2928503c9cd6&SI=NonSentItems&SLSync=F"
+        }
+      ]
     }
   ]
 }
