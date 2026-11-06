@@ -1,0 +1,420 @@
+{
+  "settings": {
+    "ticketUrl": "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=W9leptMSNkGaJyUjmIfehAs8XNZoyp9DnVAl2NUCQhlUN0RSSlFLN05RTTZXSkY5NVc5MEEwT1BCMSQlQCN0PWcu",
+    "ticketPrefill": "",
+    "itPhone": "208-972-8004",
+    "afterHoursPhone": "208-972-8004",
+    "statusPageUrl": "https://boisecity.sharepoint.com/sites/TEAM-IT-Jaysteam",
+    "officeHours": {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "open": "08:00",
+      "close": "17:00",
+      "timeZone": "America/Boise"
+    },
+    "holidays": [
+      "2026-01-01",
+      "2026-01-19",
+      "2026-02-16",
+      "2026-05-25",
+      "2026-06-19",
+      "2026-07-03",
+      "2026-09-07",
+      "2026-11-11",
+      "2026-11-26",
+      "2026-12-25",
+      "2027-01-01",
+      "2027-01-18",
+      "2027-02-15",
+      "2027-05-31",
+      "2027-06-18",
+      "2027-07-05",
+      "2027-09-06",
+      "2027-11-11",
+      "2027-11-25",
+      "2027-12-24"
+    ],
+    "categories": [
+      "Accounts and Access",
+      "Email and Teams",
+      "Hardware",
+      "Software",
+      "Network and VPN",
+      "Printing",
+      "Security",
+      "Other"
+    ],
+    "quickButtons": [
+      "Reset my password",
+      "Set up MFA",
+      "VPN help",
+      "Is anything down?",
+      "Create a ticket"
+    ],
+    "greeting": "Hi! I'm the IT Help chat. Ask me a question, or pick one of the options below.",
+    "closedMessage": "IT is closed right now. For urgent problems that stop your work, call {AFTER_HOURS}. I can still help with common questions, and any ticket you create will be picked up when IT reopens.",
+    "noAnswerMessage": "I don't have an answer for that one yet. Create a ticket and IT will get back to you, or call {IT_PHONE} if it's urgent.",
+    "noOutageMessage": "No outage has been posted to this chat. The Service status banner on the IT Helpdesk home page always shows the latest, so check it first. If something still isn't working for you, create a ticket."
+  },
+  "status": {
+    "active": false,
+    "service": "",
+    "message": "",
+    "workaround": "",
+    "nextUpdate": ""
+  },
+  "answers": [
+    {
+      "id": "password",
+      "title": "Reset a password",
+      "category": "Accounts and Access",
+      "ticket": false,
+      "keywords": [
+        "password",
+        "reset",
+        "forgot",
+        "expired",
+        "change password"
+      ],
+      "text": "You can reset your password yourself, any time:",
+      "steps": [
+        "Go to the password reset page.",
+        "Enter your work email and complete the verification.",
+        "Choose a new password and sign in again everywhere (phone email, Teams, VPN)."
+      ],
+      "links": [
+        {
+          "label": "Reset my password",
+          "url": "https://passwordreset.microsoftonline.com"
+        }
+      ]
+    },
+    {
+      "id": "locked",
+      "title": "Account locked out",
+      "category": "Accounts and Access",
+      "ticket": true,
+      "keywords": [
+        "locked",
+        "lockout",
+        "locked out",
+        "can't sign in",
+        "cant sign in",
+        "cannot log in",
+        "can't log in",
+        "cant log in"
+      ],
+      "text": "If your account is locked, wait 15 minutes and try again. If it's still locked, or you think someone else is using your account, call IT right away at {IT_PHONE}.",
+      "steps": [],
+      "links": []
+    },
+    {
+      "id": "mfa",
+      "title": "Set up MFA on a new phone",
+      "category": "Accounts and Access",
+      "ticket": true,
+      "keywords": [
+        "mfa",
+        "authenticator",
+        "two factor",
+        "2fa",
+        "verification code",
+        "new phone",
+        "security info"
+      ],
+      "text": "To set up MFA on a new phone:",
+      "steps": [
+        "Install Microsoft Authenticator on the new phone.",
+        "On a computer, go to My Sign-Ins and open Security info.",
+        "Choose Add sign-in method, pick Authenticator app, and scan the QR code with the phone.",
+        "Remove the old phone from the list once the new one works."
+      ],
+      "links": [
+        {
+          "label": "Open My Sign-Ins",
+          "url": "https://mysignins.microsoft.com/security-info"
+        }
+      ]
+    },
+    {
+      "id": "vpn",
+      "title": "VPN problems",
+      "category": "Network and VPN",
+      "ticket": true,
+      "keywords": [
+        "vpn",
+        "remote",
+        "work from home",
+        "from home",
+        "remote access"
+      ],
+      "text": "For VPN problems, try these first:",
+      "steps": [
+        "Check that your internet works by opening any website.",
+        "Fully quit the VPN client ([VPN CLIENT NAME]) and open it again.",
+        "Restart your computer and reconnect.",
+        "If it still fails, note any error message and create a ticket."
+      ],
+      "links": []
+    },
+    {
+      "id": "wifi",
+      "title": "Wi-Fi problems",
+      "category": "Network and VPN",
+      "ticket": true,
+      "keywords": [
+        "wifi",
+        "wi-fi",
+        "wireless",
+        "internet",
+        "network",
+        "no connection"
+      ],
+      "text": "For Wi-Fi trouble:",
+      "steps": [
+        "Make sure you're on the right network: [WI-FI NETWORK NAME].",
+        "Turn Wi-Fi off and back on.",
+        "Forget the network and reconnect.",
+        "If other people nearby also have no connection, it may be an outage. Ask me 'is anything down?'"
+      ],
+      "links": []
+    },
+    {
+      "id": "printing",
+      "title": "Printers and scanning",
+      "category": "Printing",
+      "ticket": true,
+      "keywords": [
+        "print",
+        "printer",
+        "printing",
+        "scan",
+        "scanner",
+        "toner",
+        "paper jam",
+        "jammed"
+      ],
+      "text": "To add a printer on Windows:",
+      "steps": [
+        "Open Settings, then Bluetooth & devices, then Printers & scanners.",
+        "Select Add device, or Add manually and enter [PRINT SERVER] with the printer name.",
+        "For jams, toner or hardware faults, create a ticket with the printer's name or location."
+      ],
+      "links": []
+    },
+    {
+      "id": "shared-mailbox",
+      "title": "Shared mailboxes",
+      "category": "Email and Teams",
+      "ticket": true,
+      "keywords": [
+        "shared mailbox",
+        "mailbox",
+        "shared inbox"
+      ],
+      "text": "Shared mailboxes you have access to usually appear in Outlook on their own within a few hours. To add one manually in Outlook on the web: right-click Folders, choose Add shared folder or mailbox, and type the mailbox name. No access yet? Create a ticket and include the mailbox name.",
+      "steps": [],
+      "links": []
+    },
+    {
+      "id": "outlook",
+      "title": "Outlook and email",
+      "category": "Email and Teams",
+      "ticket": true,
+      "keywords": [
+        "outlook",
+        "email",
+        "e-mail",
+        "not syncing",
+        "inbox"
+      ],
+      "text": "For Outlook problems:",
+      "steps": [
+        "Check whether Outlook on the web works. If it does, the issue is with the Outlook app.",
+        "Close Outlook completely and reopen it.",
+        "Restart your computer.",
+        "If email still isn't arriving, create a ticket."
+      ],
+      "links": []
+    },
+    {
+      "id": "teams",
+      "title": "Teams audio and video",
+      "category": "Email and Teams",
+      "ticket": true,
+      "keywords": [
+        "teams",
+        "meeting",
+        "camera",
+        "microphone",
+        "mic",
+        "audio",
+        "sound",
+        "headset"
+      ],
+      "text": "For Teams audio or video problems:",
+      "steps": [
+        "In Teams, open Settings, then Devices, and pick the right speaker, microphone and camera.",
+        "Unplug and replug your headset or camera.",
+        "Quit Teams completely and reopen it."
+      ],
+      "links": []
+    },
+    {
+      "id": "onedrive",
+      "title": "OneDrive storage and sync",
+      "category": "Software",
+      "ticket": true,
+      "keywords": [
+        "onedrive",
+        "storage",
+        "space",
+        "sync",
+        "files"
+      ],
+      "text": "If OneDrive is full or not syncing:",
+      "steps": [
+        "Click the OneDrive cloud icon in the taskbar to see any errors.",
+        "Turn on Files On-Demand so files only download when you open them.",
+        "Delete or move large files you no longer need.",
+        "Pause and resume syncing if it seems stuck."
+      ],
+      "links": []
+    },
+    {
+      "id": "slow",
+      "title": "Slow or freezing computer",
+      "category": "Hardware",
+      "ticket": true,
+      "keywords": [
+        "slow",
+        "freezing",
+        "frozen",
+        "crash",
+        "crashing",
+        "not responding"
+      ],
+      "text": "If your computer is slow or freezing:",
+      "steps": [
+        "Save your work and restart (a full restart, not sleep).",
+        "Install any pending updates.",
+        "Close browser tabs and apps you don't need.",
+        "If it keeps happening, create a ticket with what you were doing when it froze."
+      ],
+      "links": []
+    },
+    {
+      "id": "phishing",
+      "title": "Phishing and suspicious email",
+      "category": "Security",
+      "ticket": true,
+      "keywords": [
+        "phish",
+        "phishing",
+        "suspicious",
+        "scam",
+        "spam",
+        "clicked a link"
+      ],
+      "text": "Don't click links or open attachments in the message. Use the Report button in Outlook to report it as phishing. If you already clicked a link or entered your password, reset your password now and call IT at {IT_PHONE}.",
+      "steps": [],
+      "links": [
+        {
+          "label": "Reset my password",
+          "url": "https://passwordreset.microsoftonline.com"
+        }
+      ]
+    },
+    {
+      "id": "software",
+      "title": "Software requests",
+      "category": "Software",
+      "ticket": true,
+      "keywords": [
+        "software",
+        "install",
+        "app",
+        "application",
+        "license",
+        "adobe"
+      ],
+      "text": "To get software installed, create a ticket with the software name and why you need it. IT will check licensing and install it for you.",
+      "steps": [],
+      "links": []
+    },
+    {
+      "id": "hardware",
+      "title": "Hardware and equipment",
+      "category": "Hardware",
+      "ticket": true,
+      "keywords": [
+        "laptop",
+        "computer",
+        "monitor",
+        "keyboard",
+        "mouse",
+        "device",
+        "hardware",
+        "dock"
+      ],
+      "text": "For new equipment or broken hardware, create a ticket with what you need (or what's broken) and your location.",
+      "steps": [],
+      "links": []
+    },
+    {
+      "id": "new-hire",
+      "title": "New hires",
+      "category": "Accounts and Access",
+      "ticket": true,
+      "keywords": [
+        "new hire",
+        "first day",
+        "onboarding",
+        "new employee"
+      ],
+      "text": "Welcome! On your first day: sign in with the details from your supervisor, set up MFA (ask me 'set up MFA'), and set a new password. If anything doesn't work, create a ticket.",
+      "steps": [],
+      "links": []
+    },
+    {
+      "id": "contact",
+      "title": "Contacting IT",
+      "category": "",
+      "ticket": false,
+      "keywords": [
+        "hours",
+        "contact",
+        "phone number",
+        "call",
+        "walk-up",
+        "who do i call"
+      ],
+      "text": "You can reach IT by phone at {IT_PHONE}, Monday to Friday, 8 AM to 5 PM. For urgent outages after hours, call {AFTER_HOURS}.",
+      "steps": [],
+      "links": []
+    },
+    {
+      "id": "ticket",
+      "title": "Create a ticket",
+      "category": "",
+      "ticket": true,
+      "keywords": [
+        "ticket",
+        "request",
+        "help desk",
+        "helpdesk",
+        "talk to someone",
+        "human",
+        "agent"
+      ],
+      "text": "You can create a ticket and IT will get back to you.",
+      "steps": [],
+      "links": []
+    }
+  ]
+}

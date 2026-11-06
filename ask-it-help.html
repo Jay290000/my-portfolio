@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask IT Help</title>
+<style>
+:root {
+  --navy: #1f3a5f; --teal: #0f8b8d; --bg: #f5f6f8; --surface: #ffffff; --border: #dde1e7;
+  --text: #1b1f24; --muted: #4a5563; --on-navy-muted: #dde1e7; --focus: #0f8b8d;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --navy: #1a3352; --teal: #13a3a5; --bg: #12161c; --surface: #1b2129; --border: #2e3641;
+    --text: #e8ebef; --muted: #a9b2bf; --on-navy-muted: #c7d0dc; --focus: #5fd0d2; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font-family: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; color: var(--text); background: var(--surface); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.chat { height: 100%; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.chat-head { background: var(--navy); color: #ffffff; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.chat-head h1 { margin: 0; font-size: 16px; }
+.chat-head p { margin: 2px 0 0; font-size: 12px; color: var(--on-navy-muted); }
+.chat-log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+.msg { max-width: 88%; padding: 10px 12px; border-radius: 10px; font-size: 14px; line-height: 1.45; }
+.msg p { margin: 0 0 6px; } .msg p:last-child { margin-bottom: 0; }
+.msg ol { margin: 6px 0; padding-left: 20px; } .msg li + li { margin-top: 4px; }
+.msg.bot { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+.msg.me { align-self: flex-end; background: var(--navy); color: #ffffff; border-bottom-right-radius: 2px; }
+.msg-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.msg-links a { display: inline-block; padding: 6px 10px; border-radius: 6px; background: var(--teal); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px 0; background: var(--surface); }
+.chips button { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 13px; cursor: pointer; }
+.chips button:hover { border-color: var(--teal); }
+.chat-form { display: flex; gap: 8px; padding: 12px 16px 14px; background: var(--surface); }
+.chat-form input { flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font: inherit; font-size: 14px; background: var(--surface); color: var(--text); }
+.chat-form button { border: 0; border-radius: 6px; padding: 0 14px; background: var(--navy); color: #ffffff; font: inherit; font-weight: 600; cursor: pointer; }
+.chat-note { margin: 0; padding: 0 16px 10px; font-size: 11px; color: var(--muted); background: var(--surface); }
+</style>
+</head>
+<body>
+<main class="chat" aria-labelledby="chat-title">
+  <div class="chat-head">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>
+    <div><h1 id="chat-title">Ask IT Help</h1><p>Quick answers to common questions</p></div>
+  </div>
+  <div class="chat-log" id="chat-log" aria-live="polite"></div>
+  <div class="chips" id="chat-chips"></div>
+  <form class="chat-form" id="chat-form">
+    <label class="visually-hidden" for="chat-input">Type your question</label>
+    <input id="chat-input" type="text" placeholder="Type your question…" autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+  <p class="chat-note">Never share your password or MFA codes here.</p>
+</main>
+<script>
+/* Answers, outage status and settings live in chat-data.json and are edited on admin.html.
+   These two are only used if chat-data.json can't be loaded. */
+const FALLBACK_TICKET_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=W9leptMSNkGaJyUjmIfehAs8XNZoyp9DnVAl2NUCQhlUN0RSSlFLN05RTTZXSkY5NVc5MEEwT1BCMSQlQCN0PWcu";
+const FALLBACK_PHONE = "208-972-8004";
+
+/* Shared matching logic: the chat and the admin test panel use the same code. */
+function normalizeQuestion(q) {
+  return " " + String(q).toLowerCase().replace(/[^a-z0-9\s'-]/g, " ").replace(/\s+/g, " ") + " ";
+}
+const STATUS_PATTERN = /\b(down|outages?|status|is anything|anything (broken|wrong)|known (issues?|problems?)|service (issues?|problems?)|not working for (everyone|anyone|others))\b/;
+function matchQuestion(q, data) {
+  const t = normalizeQuestion(q);
+  if (STATUS_PATTERN.test(t)) return { kind: "status" };
+  if (/^\s*(hi|hello|hey)\b/.test(t)) return { kind: "hello" };
+  if (/\b(thanks|thank you|thx)\b/.test(t)) return { kind: "thanks" };
+  let best = null, bestScore = 0;
+  (data.answers || []).forEach(a => {
+    let score = 0;
+    (a.keywords || []).forEach(k => {
+      k = String(k).toLowerCase().trim();
+      if (k && (t.includes(" " + k + " ") || t.includes(" " + k))) score += k.split(" ").length;
+    });
+    if (score > bestScore) { best = a; bestScore = score; }
+  });
+  return best ? { kind: "answer", answer: best } : { kind: "none" };
+}
+function fillTokens(text, s) {
+  return String(text || "").split("{IT_PHONE}").join(s.itPhone || "").split("{AFTER_HOURS}").join(s.afterHoursPhone || "");
+}
+
+(function () {
+  const log = document.getElementById("chat-log");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  const chips = document.getElementById("chat-chips");
+  let data = null, lastCat = "";
+
+  function ticketUrl(cat) {
+    const s = data ? data.settings : {};
+    const base = s.ticketUrl || FALLBACK_TICKET_URL;
+    const pre = s.ticketPrefill || "";
+    if (!cat || !pre) return base;
+    const i = pre.lastIndexOf("Other");
+    if (i < 0) return base;
+    return pre.slice(0, i) + encodeURIComponent(cat) + pre.slice(i + 5);
+  }
+
+  function addMsg(who, parts) {
+    const m = document.createElement("div");
+    m.className = "msg " + who;
+    if (typeof parts === "string") parts = { text: parts };
+    if (parts.text) { const p = document.createElement("p"); p.textContent = parts.text; m.append(p); }
+    if (parts.steps && parts.steps.length) {
+      const ol = document.createElement("ol");
+      parts.steps.forEach(t => { const li = document.createElement("li"); li.textContent = t; ol.append(li); });
+      m.append(ol);
+    }
+    const links = (parts.links || []).filter(l => l && l.url).slice();
+    if (parts.ticket) links.push({ label: "Create a ticket", url: ticketUrl(parts.cat || lastCat) });
+    if (links.length) {
+      const row = document.createElement("div"); row.className = "msg-links";
+      links.forEach(l => { const a = document.createElement("a"); a.href = l.url; a.textContent = l.label || "Open"; a.target = "_blank"; a.rel = "noopener"; row.append(a); });
+      m.append(row);
+    }
+    log.append(m);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function itNow(tz) {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short" }).formatToParts(new Date());
+    const get = t => parts.find(p => p.type === t).value;
+    const days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    return { date: get("year") + "-" + get("month") + "-" + get("day"), day: days[get("weekday")], minutes: parseInt(get("hour"), 10) * 60 + parseInt(get("minute"), 10) };
+  }
+  function toMinutes(hhmm) { const p = String(hhmm).split(":").map(Number); return p[0] * 60 + (p[1] || 0); }
+  function isOpen() {
+    const h = data.settings.officeHours || {};
+    const n = itNow(h.timeZone || "America/Boise");
+    return (h.days || []).includes(n.day) && !(data.settings.holidays || []).includes(n.date) &&
+      n.minutes >= toMinutes(h.open || "08:00") && n.minutes < toMinutes(h.close || "17:00");
+  }
+
+  function reply(q) {
+    const s = data.settings;
+    const r = matchQuestion(q, data);
+    if (r.kind === "status") {
+      const st = data.status || {};
+      if (st.active) {
+        return { text: (st.service ? st.service + " is currently having problems: " : "There is a current outage: ") + (st.message || "") +
+          (st.workaround ? " Workaround: " + st.workaround : "") + (st.nextUpdate ? " Next update by " + st.nextUpdate + "." : "") };
+      }
+      return { text: fillTokens(s.noOutageMessage, s), links: s.statusPageUrl ? [{ label: "View service status", url: s.statusPageUrl }] : [], ticket: true };
+    }
+    if (r.kind === "hello") return { text: "Hi! What can I help you with? You can type a question or pick one of the options below." };
+    if (r.kind === "thanks") return { text: "You're welcome. Anything else?" };
+    if (r.kind === "answer") {
+      const a = r.answer;
+      if (a.category) lastCat = a.category;
+      return { text: fillTokens(a.text, s), steps: (a.steps || []).map(x => fillTokens(x, s)), links: a.links, ticket: a.ticket, cat: a.category };
+    }
+    return { text: fillTokens(s.noAnswerMessage, s), ticket: true };
+  }
+
+  function ask(q) {
+    q = q.trim(); if (!q) return;
+    addMsg("me", q);
+    setTimeout(() => addMsg("bot", data ? reply(q) : { text: "Sorry, I couldn't load my answers. Create a ticket or call IT at " + FALLBACK_PHONE + ".", ticket: true }), 250);
+  }
+
+  form.addEventListener("submit", e => { e.preventDefault(); ask(input.value); input.value = ""; });
+
+  fetch("chat-data.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => {
+      data = d;
+      const s = data.settings;
+      addMsg("bot", s.greeting || "Hi! How can I help?");
+      if (s.officeHours && !isOpen()) addMsg("bot", fillTokens(s.closedMessage, s));
+      (s.quickButtons || []).forEach(label => {
+        const b = document.createElement("button"); b.type = "button"; b.textContent = label;
+        b.addEventListener("click", () => ask(label));
+        chips.append(b);
+      });
+    })
+    .catch(() => addMsg("bot", { text: "Sorry, I couldn't load my answers right now. Create a ticket or call IT at " + FALLBACK_PHONE + ".", ticket: true }));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ask IT Help – Admin</title>
+<style>
+:root {
+  --navy: #1f3a5f; --navy-2: #2b4c78; --teal: #0f8b8d; --bg: #f5f6f8; --surface: #ffffff; --border: #d5dae1;
+  --text: #1b1f24; --muted: #4a5563; --soft: #eef2f7; --danger: #b3261e; --ok: #1d7a4e; --warn-bg: #fff4dc; --warn-text: #5c3a00;
+  --focus: #0f8b8d; color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --navy: #2b4c78; --navy-2: #3a5f92; --teal: #13a3a5; --bg: #12161c; --surface: #1b2129; --border: #2e3641;
+    --text: #e8ebef; --muted: #a9b2bf; --soft: #222a35; --danger: #f2867d; --ok: #6fd3a2; --warn-bg: #3a2e12; --warn-text: #f6dca0;
+    --focus: #5fd0d2; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.45; color: var(--text); background: var(--bg); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+header { background: var(--navy); color: #fff; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+header h1 { margin: 0; font-size: 19px; }
+header p { margin: 0; font-size: 13px; opacity: .85; }
+main .wrap { padding-top: 24px; padding-bottom: 60px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+.card + .card { margin-top: 16px; }
+h2 { margin: 0 0 4px; font-size: 18px; }
+.lead { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+label { display: block; font-weight: 600; font-size: 13px; margin: 14px 0 4px; }
+.hint { font-weight: 400; color: var(--muted); }
+input[type=text], input[type=password], input[type=url], input[type=time], input[type=search], select, textarea {
+  width: 100%; font: inherit; font-size: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+textarea { min-height: 80px; resize: vertical; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
+.check { display: flex; align-items: center; gap: 8px; font-weight: 600; margin: 14px 0 4px; }
+.check input { width: 18px; height: 18px; }
+.days { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.days label { display: flex; align-items: center; gap: 6px; font-weight: 400; margin: 0; }
+button { font: inherit; font-size: 14px; border-radius: 6px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+button.primary { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 600; }
+button.primary:hover { background: var(--navy-2); }
+button.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+button:disabled { opacity: .5; cursor: default; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-wrap: wrap; }
+.tabs button { border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: transparent; padding: 10px 14px; font-weight: 600; color: var(--muted); }
+.tabs button[aria-selected=true] { color: var(--text); border-bottom-color: var(--teal); }
+.savebar { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--border); }
+.savebar .wrap { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+.savebar .msg { flex: 1; font-size: 14px; color: var(--muted); min-width: 200px; }
+.savebar .msg.dirty { color: var(--warn-text); font-weight: 600; }
+.savebar .msg.ok { color: var(--ok); font-weight: 600; }
+.savebar .msg.err { color: var(--danger); font-weight: 600; }
+.split { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+.list { list-style: none; margin: 10px 0 0; padding: 0; max-height: 520px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+.list li button { width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; padding: 10px 12px; background: transparent; }
+.list li:last-child button { border-bottom: 0; }
+.list li button[aria-current=true] { background: var(--soft); box-shadow: inset 3px 0 0 var(--teal); }
+.list small { display: block; color: var(--muted); font-size: 12px; }
+.banner { padding: 12px 14px; border-radius: 8px; background: var(--warn-bg); color: var(--warn-text); font-size: 14px; margin-bottom: 16px; }
+.preview { margin-top: 16px; padding: 12px 14px; border-radius: 8px; background: var(--soft); font-size: 14px; }
+.preview p { margin: 0 0 6px; } .preview ol { margin: 6px 0 0; padding-left: 20px; }
+.preview .btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.preview .btns span { background: var(--teal); color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+[hidden] { display: none !important; }
+details summary { cursor: pointer; color: var(--muted); font-size: 14px; margin-top: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div><h1>Ask IT Help – Admin</h1><p>Edit answers, outage status and settings. Changes go live about a minute after saving.</p></div>
+  </div>
+</header>
+
+<div class="savebar" id="savebar" hidden>
+  <div class="wrap">
+    <span class="msg" id="save-msg">All changes saved.</span>
+    <button type="button" id="reload-btn">Reload from GitHub</button>
+    <button type="button" class="primary" id="save-btn">Save to GitHub</button>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <section class="card" id="connect-card" aria-labelledby="connect-title">
+      <h2 id="connect-title">Sign in with your GitHub key</h2>
+      <p class="lead">This page saves directly to your GitHub repository, so it needs a personal access token with permission to change files in it. The token stays in this browser and is never saved to GitHub.</p>
+      <label for="token">GitHub personal access token</label>
+      <input type="password" id="token" autocomplete="off" placeholder="github_pat_…">
+      <label class="check"><input type="checkbox" id="remember"> Remember on this computer</label>
+      <details>
+        <summary>Repository details</summary>
+        <div class="row">
+          <div><label for="owner">Account</label><input type="text" id="owner" value="jay290000"></div>
+          <div><label for="repo">Repository</label><input type="text" id="repo" value="my-portfolio"></div>
+          <div><label for="branch">Branch</label><input type="text" id="branch" value="main"></div>
+          <div><label for="path">Data file</label><input type="text" id="path" value="chat-data.json"></div>
+        </div>
+      </details>
+      <div class="actions">
+        <button type="button" class="primary" id="connect-btn">Load</button>
+        <button type="button" id="forget-btn">Forget token</button>
+      </div>
+      <p id="connect-msg" class="lead" style="margin-top:12px" aria-live="polite"></p>
+    </section>
+
+    <div id="editor" hidden>
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="status">Outage status</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="answers">Questions and answers</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="settings">Settings</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="test">Test the chat</button>
+      </div>
+
+      <section class="card" data-panel="status" aria-label="Outage status">
+        <h2>Outage status</h2>
+        <p class="lead">What the chat says when someone asks "Is anything down?". Also update the Service Status list in SharePoint so the home page banner matches.</p>
+        <label class="check"><input type="checkbox" id="st-active"> There is an outage right now</label>
+        <div class="row">
+          <div><label for="st-service">Service <span class="hint">e.g. VPN</span></label><input type="text" id="st-service"></div>
+          <div><label for="st-next">Next update <span class="hint">e.g. 10:30 AM</span></label><input type="text" id="st-next"></div>
+        </div>
+        <label for="st-message">What's happening</label>
+        <input type="text" id="st-message" placeholder="Remote users can't connect.">
+        <label for="st-workaround">Workaround <span class="hint">optional</span></label>
+        <input type="text" id="st-workaround">
+        <div class="preview" id="st-preview"></div>
+        <div class="actions"><button type="button" class="danger" id="st-clear">Clear outage</button></div>
+      </section>
+
+      <section class="card" data-panel="answers" hidden aria-label="Questions and answers">
+        <h2>Questions and answers</h2>
+        <p class="lead">Each answer has keywords. The chat picks the answer whose keywords best match what the person types.</p>
+        <div class="split">
+          <div>
+            <input type="search" id="ans-search" placeholder="Search answers" aria-label="Search answers">
+            <ul class="list" id="ans-list"></ul>
+            <div class="actions"><button type="button" class="primary" id="ans-add">+ Add answer</button></div>
+          </div>
+          <div id="ans-editor">
+            <label for="a-title">Name <span class="hint">for this page only, e.g. "VPN problems"</span></label>
+            <input type="text" id="a-title">
+            <label for="a-keys">Keywords <span class="hint">one per line; words or short phrases people might type</span></label>
+            <textarea id="a-keys"></textarea>
+            <label for="a-text">Answer</label>
+            <textarea id="a-text"></textarea>
+            <label for="a-steps">Steps <span class="hint">optional, one per line; shown as a numbered list</span></label>
+            <textarea id="a-steps"></textarea>
+            <label for="a-links">Link buttons <span class="hint">optional, one per line as: Button label | https://address</span></label>
+            <textarea id="a-links" style="min-height:60px"></textarea>
+            <div class="row">
+              <div><label for="a-cat">Ticket category <span class="hint">pre-filled on the form</span></label><select id="a-cat"></select></div>
+              <div><label class="check" style="margin-top:36px"><input type="checkbox" id="a-ticket"> Show a Create a ticket button</label></div>
+            </div>
+            <p class="hint" style="font-size:13px;margin-top:10px">Tip: type {IT_PHONE} or {AFTER_HOURS} in any text to insert the phone numbers from Settings.</p>
+            <div class="preview" id="a-preview"></div>
+            <div class="actions"><button type="button" class="danger" id="ans-delete">Delete this answer</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-panel="settings" hidden aria-label="Settings">
+        <h2>Settings</h2>
+        <p class="lead">Contact details, the ticket form, office hours and the chat's standard messages.</p>
+        <div class="row">
+          <div><label for="s-phone">IT phone</label><input type="text" id="s-phone"></div>
+          <div><label for="s-after">After-hours phone</label><input type="text" id="s-after"></div>
+        </div>
+        <label for="s-ticket">Ticket form link</label><input type="url" id="s-ticket">
+        <label for="s-prefill">Pre-filled form link <span class="hint">made in Forms with Category set to Other</span></label><input type="url" id="s-prefill">
+        <label for="s-statuspage">Service status page</label><input type="url" id="s-statuspage">
+        <label>Office days</label>
+        <div class="days" id="s-days"></div>
+        <div class="row">
+          <div><label for="s-open">Opens <span class="hint">Boise time</span></label><input type="time" id="s-open"></div>
+          <div><label for="s-close">Closes</label><input type="time" id="s-close"></div>
+        </div>
+        <label for="s-holidays">Holidays <span class="hint">one per line, as YYYY-MM-DD</span></label><textarea id="s-holidays" style="min-height:140px"></textarea>
+        <label for="s-cats">Ticket categories <span class="hint">one per line; must match the form's Category choices exactly</span></label><textarea id="s-cats"></textarea>
+        <label for="s-quick">Quick buttons <span class="hint">one per line; shown under the chat</span></label><textarea id="s-quick"></textarea>
+        <label for="s-greeting">Greeting</label><textarea id="s-greeting" style="min-height:60px"></textarea>
+        <label for="s-closed">After-hours message</label><textarea id="s-closed" style="min-height:60px"></textarea>
+        <label for="s-noanswer">When the chat has no answer</label><textarea id="s-noanswer" style="min-height:60px"></textarea>
+        <label for="s-nooutage">When no outage is posted</label><textarea id="s-nooutage" style="min-height:60px"></textarea>
+      </section>
+
+      <section class="card" data-panel="test" hidden aria-label="Test the chat">
+        <h2>Test the chat</h2>
+        <p class="lead">Try a question to see which answer the chat would give, using your current edits (saved or not).</p>
+        <label for="t-q">Question</label>
+        <input type="text" id="t-q" placeholder="e.g. are there any outages">
+        <div class="preview" id="t-result">Type a question above.</div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+/* Shared matching logic: the chat and the admin test panel use the same code. */
+function normalizeQuestion(q) {
+  return " " + String(q).toLowerCase().replace(/[^a-z0-9\s'-]/g, " ").replace(/\s+/g, " ") + " ";
+}
+const STATUS_PATTERN = /\b(down|outages?|status|is anything|anything (broken|wrong)|known (issues?|problems?)|service (issues?|problems?)|not working for (everyone|anyone|others))\b/;
+function matchQuestion(q, data) {
+  const t = normalizeQuestion(q);
+  if (STATUS_PATTERN.test(t)) return { kind: "status" };
+  if (/^\s*(hi|hello|hey)\b/.test(t)) return { kind: "hello" };
+  if (/\b(thanks|thank you|thx)\b/.test(t)) return { kind: "thanks" };
+  let best = null, bestScore = 0;
+  (data.answers || []).forEach(a => {
+    let score = 0;
+    (a.keywords || []).forEach(k => {
+      k = String(k).toLowerCase().trim();
+      if (k && (t.includes(" " + k + " ") || t.includes(" " + k))) score += k.split(" ").length;
+    });
+    if (score > bestScore) { best = a; bestScore = score; }
+  });
+  return best ? { kind: "answer", answer: best } : { kind: "none" };
+}
+function fillTokens(text, s) {
+  return String(text || "").split("{IT_PHONE}").join(s.itPhone || "").split("{AFTER_HOURS}").join(s.afterHoursPhone || "");
+}
+
+(function () {
+  const $ = id => document.getElementById(id);
+  const TOKEN_KEY = "askItHelpAdminToken";
+  let data = null, sha = null, dirty = false, current = 0;
+
+  /* ---------- token ---------- */
+  const saved = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+  if (saved) { $("token").value = saved; $("remember").checked = !!localStorage.getItem(TOKEN_KEY); }
+  $("forget-btn").onclick = () => { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); $("token").value = ""; $("connect-msg").textContent = "Token removed from this browser."; };
+
+  /* ---------- GitHub ---------- */
+  const repoInfo = () => ({ owner: $("owner").value.trim(), repo: $("repo").value.trim(), branch: $("branch").value.trim(), path: $("path").value.trim() });
+  const apiUrl = r => "https://api.github.com/repos/" + encodeURIComponent(r.owner) + "/" + encodeURIComponent(r.repo) + "/contents/" + r.path.split("/").map(encodeURIComponent).join("/");
+  const headers = () => ({ "Authorization": "Bearer " + $("token").value.trim(), "Accept": "application/vnd.github+json" });
+  function toB64(str) { const bytes = new TextEncoder().encode(str); let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b)); return btoa(bin); }
+  function fromB64(b64) { const bin = atob(b64.replace(/\n/g, "")); return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))); }
+  function explain(status) {
+    if (status === 401) return "GitHub didn't accept the token. Check it was copied in full and hasn't expired.";
+    if (status === 403) return "The token doesn't have permission. It needs Contents: Read and write on this repository.";
+    if (status === 404) return "Couldn't find the file. Check the repository details and that chat-data.json is uploaded.";
+    if (status === 409 || status === 422) return "The file changed on GitHub since you loaded it. Click Reload from GitHub, then make your changes again.";
+    return "GitHub returned an error (" + status + "). Try again in a minute.";
+  }
+
+  async function load() {
+    const msg = $("connect-msg");
+    if (!$("token").value.trim()) { msg.textContent = "Paste your GitHub token first."; return; }
+    msg.textContent = "Loading…";
+    try {
+      const r = repoInfo();
+      const res = await fetch(apiUrl(r) + "?ref=" + encodeURIComponent(r.branch), { headers: headers(), cache: "no-store" });
+      if (!res.ok) { msg.textContent = explain(res.status); return; }
+      const j = await res.json();
+      data = JSON.parse(fromB64(j.content)); sha = j.sha;
+      data.settings = data.settings || {}; data.status = data.status || {}; data.answers = data.answers || [];
+      const store = $("remember").checked ? localStorage : sessionStorage;
+      (store === localStorage ? sessionStorage : localStorage).removeItem(TOKEN_KEY);
+      store.setItem(TOKEN_KEY, $("token").value.trim());
+      msg.textContent = "";
+      $("connect-card").hidden = true; $("editor").hidden = false; $("savebar").hidden = false;
+      current = 0; renderAll(); setDirty(false);
+    } catch (e) { msg.textContent = "Couldn't reach GitHub. Check your internet connection and try again."; }
+  }
+  $("connect-btn").onclick = load;
+  $("token").addEventListener("keydown", e => { if (e.key === "Enter") load(); });
+
+  async function save() {
+    const problem = validate();
+    if (problem) { setMsg(problem, "err"); return; }
+    setMsg("Saving…"); $("save-btn").disabled = true;
+    try {
+      const r = repoInfo();
+      const body = { message: "Update Ask IT Help answers and status", content: toB64(JSON.stringify(data, null, 2) + "\n"), sha: sha, branch: r.branch };
+      const res = await fetch(apiUrl(r), { method: "PUT", headers: Object.assign({ "Content-Type": "application/json" }, headers()), body: JSON.stringify(body) });
+      if (!res.ok) { setMsg(explain(res.status), "err"); return; }
+      const j = await res.json(); sha = j.content.sha;
+      setDirty(false);
+      setMsg("Saved " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ". The chat updates in about a minute.", "ok");
+    } catch (e) { setMsg("Couldn't reach GitHub. Your changes are still here; try Save again.", "err"); }
+    finally { $("save-btn").disabled = false; }
+  }
+  $("save-btn").onclick = save;
+  $("reload-btn").onclick = () => { if (dirty && !confirm("Discard your unsaved changes and reload?")) return; load(); };
+
+  function validate() {
+    for (const a of data.answers) {
+      if (!a.keywords || !a.keywords.length) return "\"" + (a.title || "Untitled answer") + "\" has no keywords, so the chat could never show it. Add keywords or delete it.";
+      if (!String(a.text || "").trim()) return "\"" + (a.title || "Untitled answer") + "\" has no answer text.";
+    }
+    return "";
+  }
+  function setMsg(text, kind) { const m = $("save-msg"); m.textContent = text; m.className = "msg" + (kind ? " " + kind : ""); }
+  function setDirty(v) { dirty = v; if (v) setMsg("You have unsaved changes.", "dirty"); }
+  window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+  /* ---------- tabs ---------- */
+  document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+    document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b ? "true" : "false"));
+    document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== b.dataset.tab);
+    if (b.dataset.tab === "answers") renderAnswerEditor();
+  });
+
+  const lines = v => v.split("\n").map(x => x.trim()).filter(Boolean);
+
+  /* ---------- outage status ---------- */
+  function renderStatus() {
+    const s = data.status;
+    $("st-active").checked = !!s.active; $("st-service").value = s.service || ""; $("st-message").value = s.message || "";
+    $("st-workaround").value = s.workaround || ""; $("st-next").value = s.nextUpdate || ""; statusPreview();
+  }
+  function statusPreview() {
+    const s = data.status, p = $("st-preview");
+    p.textContent = "";
+    const t = document.createElement("p");
+    t.textContent = s.active
+      ? "Chat will say: " + (s.service ? s.service + " is currently having problems: " : "There is a current outage: ") + (s.message || "") + (s.workaround ? " Workaround: " + s.workaround : "") + (s.nextUpdate ? " Next update by " + s.nextUpdate + "." : "")
+      : "Chat will say: " + fillTokens(data.settings.noOutageMessage || "", data.settings);
+    p.append(t);
+  }
+  [["st-active", "active", "checked"], ["st-service", "service"], ["st-message", "message"], ["st-workaround", "workaround"], ["st-next", "nextUpdate"]].forEach(([id, key, prop]) => {
+    $(id).addEventListener("input", () => { data.status[key] = prop ? $(id).checked : $(id).value; statusPreview(); setDirty(true); });
+  });
+  $("st-clear").onclick = () => { data.status = { active: false, service: "", message: "", workaround: "", nextUpdate: "" }; renderStatus(); setDirty(true); };
+
+  /* ---------- answers ---------- */
+  function renderList() {
+    const q = $("ans-search").value.toLowerCase().trim(), ul = $("ans-list");
+    ul.textContent = "";
+    data.answers.forEach((a, i) => {
+      const hay = [a.title, a.text].concat(a.keywords || []).join(" ").toLowerCase();
+      if (q && !hay.includes(q)) return;
+      const li = document.createElement("li"), b = document.createElement("button");
+      b.type = "button"; b.setAttribute("aria-current", i === current ? "true" : "false");
+      b.textContent = a.title || (a.keywords || [])[0] || "Untitled answer";
+      const sm = document.createElement("small"); sm.textContent = (a.keywords || []).slice(0, 4).join(", "); b.append(sm);
+      b.onclick = () => { current = i; renderList(); renderAnswerEditor(); };
+      li.append(b); ul.append(li);
+    });
+  }
+  function catOptions() {
+    const sel = $("a-cat"); sel.textContent = "";
+    [""].concat(data.settings.categories || []).forEach(c => { const o = document.createElement("option"); o.value = c; o.textContent = c || "None"; sel.append(o); });
+  }
+  function renderAnswerEditor() {
+    const ed = $("ans-editor"), a = data.answers[current];
+    ed.hidden = !a; if (!a) return;
+    catOptions();
+    $("a-title").value = a.title || ""; $("a-keys").value = (a.keywords || []).join("\n"); $("a-text").value = a.text || "";
+    $("a-steps").value = (a.steps || []).join("\n"); $("a-links").value = (a.links || []).map(l => l.label + " | " + l.url).join("\n");
+    $("a-cat").value = a.category || ""; $("a-ticket").checked = !!a.ticket; answerPreview();
+  }
+  function answerPreview() {
+    const a = data.answers[current], p = $("a-preview"), s = data.settings; if (!a) return;
+    p.textContent = "";
+    const t = document.createElement("p"); t.textContent = fillTokens(a.text, s); p.append(t);
+    if ((a.steps || []).length) { const ol = document.createElement("ol"); a.steps.forEach(x => { const li = document.createElement("li"); li.textContent = fillTokens(x, s); ol.append(li); }); p.append(ol); }
+    const btns = (a.links || []).map(l => l.label).concat(a.ticket ? ["Create a ticket" + (a.category ? " (" + a.category + ")" : "")] : []);
+    if (btns.length) { const d = document.createElement("div"); d.className = "btns"; btns.forEach(x => { const sp = document.createElement("span"); sp.textContent = x; d.append(sp); }); p.append(d); }
+  }
+  function readAnswer() {
+    const a = data.answers[current]; if (!a) return;
+    a.title = $("a-title").value; a.keywords = lines($("a-keys").value); a.text = $("a-text").value; a.steps = lines($("a-steps").value);
+    a.links = lines($("a-links").value).map(l => { const i = l.indexOf("|"); return i < 0 ? { label: "Open link", url: l.trim() } : { label: l.slice(0, i).trim(), url: l.slice(i + 1).trim() }; });
+    a.category = $("a-cat").value; a.ticket = $("a-ticket").checked;
+    answerPreview(); renderList(); setDirty(true);
+  }
+  ["a-title", "a-keys", "a-text", "a-steps", "a-links", "a-cat", "a-ticket"].forEach(id => $(id).addEventListener("input", readAnswer));
+  $("a-cat").addEventListener("change", readAnswer);
+  $("ans-search").addEventListener("input", renderList);
+  $("ans-add").onclick = () => {
+    data.answers.push({ id: "answer-" + Date.now(), title: "New answer", category: "", ticket: true, keywords: [], text: "", steps: [], links: [] });
+    current = data.answers.length - 1; $("ans-search").value = ""; renderList(); renderAnswerEditor(); setDirty(true); $("a-title").focus(); $("a-title").select();
+  };
+  $("ans-delete").onclick = () => {
+    const a = data.answers[current]; if (!a) return;
+    if (!confirm("Delete \"" + (a.title || "this answer") + "\"? It's removed when you save.")) return;
+    data.answers.splice(current, 1); current = Math.max(0, current - 1); renderList(); renderAnswerEditor(); setDirty(true);
+  };
+
+  /* ---------- settings ---------- */
+  const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const SET = [["s-phone", "itPhone"], ["s-after", "afterHoursPhone"], ["s-ticket", "ticketUrl"], ["s-prefill", "ticketPrefill"], ["s-statuspage", "statusPageUrl"],
+    ["s-greeting", "greeting"], ["s-closed", "closedMessage"], ["s-noanswer", "noAnswerMessage"], ["s-nooutage", "noOutageMessage"]];
+  const LISTS = [["s-holidays", "holidays"], ["s-cats", "categories"], ["s-quick", "quickButtons"]];
+  function renderSettings() {
+    const s = data.settings; s.officeHours = s.officeHours || { days: [1, 2, 3, 4, 5], open: "08:00", close: "17:00", timeZone: "America/Boise" };
+    SET.forEach(([id, k]) => $(id).value = s[k] || "");
+    LISTS.forEach(([id, k]) => $(id).value = (s[k] || []).join("\n"));
+    $("s-open").value = s.officeHours.open || "08:00"; $("s-close").value = s.officeHours.close || "17:00";
+    const days = $("s-days"); days.textContent = "";
+    DAY_NAMES.forEach((n, i) => {
+      const l = document.createElement("label"), c = document.createElement("input");
+      c.type = "checkbox"; c.checked = (s.officeHours.days || []).includes(i);
+      c.onchange = () => { const d = new Set(s.officeHours.days || []); c.checked ? d.add(i) : d.delete(i); s.officeHours.days = [...d].sort(); setDirty(true); };
+      l.append(c, " " + n); days.append(l);
+    });
+  }
+  SET.forEach(([id, k]) => $(id).addEventListener("input", () => { data.settings[k] = $(id).value.trim(); setDirty(true); }));
+  LISTS.forEach(([id, k]) => $(id).addEventListener("input", () => { data.settings[k] = lines($(id).value); setDirty(true); }));
+  $("s-open").addEventListener("input", () => { data.settings.officeHours.open = $("s-open").value; setDirty(true); });
+  $("s-close").addEventListener("input", () => { data.settings.officeHours.close = $("s-close").value; setDirty(true); });
+
+  /* ---------- test ---------- */
+  $("t-q").addEventListener("input", () => {
+    const q = $("t-q").value, out = $("t-result"); out.textContent = "";
+    if (!q.trim()) { out.textContent = "Type a question above."; return; }
+    const r = matchQuestion(q, data), p = document.createElement("p");
+    if (r.kind === "answer") p.textContent = "Matches: " + (r.answer.title || r.answer.keywords[0]) + " → " + fillTokens(r.answer.text, data.settings);
+    else if (r.kind === "status") p.textContent = "Matches: Outage status → " + (data.status.active ? "reports the current outage" : fillTokens(data.settings.noOutageMessage, data.settings));
+    else if (r.kind === "hello" || r.kind === "thanks") p.textContent = "Matches: a greeting or thank-you (built in).";
+    else p.textContent = "No match → " + fillTokens(data.settings.noAnswerMessage, data.settings) + " Add keywords to an answer to cover this question.";
+    out.append(p);
+  });
+
+  function renderAll() { renderStatus(); renderList(); renderAnswerEditor(); renderSettings(); }
+})();
+</script>
+</body>
+</html>
